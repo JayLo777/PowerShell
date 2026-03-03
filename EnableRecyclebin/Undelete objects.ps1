@@ -1,0 +1,1 @@
+Get-ADDObject -filter {isDeleted -eq $True} -IncludeDeletedObjects -Properties* | Restore Get-ADDObject
