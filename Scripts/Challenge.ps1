@@ -44,9 +44,9 @@ Get-ADUser -SearchBase $OUPath -Filter * | Select Name, SamAccountName
 
 #$Part 4 Add the London OU user into "London Users" securtity group
 
-$OULondon = "London Users",$DomainDM
+$OULondon = "London Users"
 $DomainDN = "DC=Adatum,DC=com"
-$PathLondon = "$OULondon,$DomainDN"
+$PathLondon = "OU=$($OULondon),$($DomainDN)"
 
 $users = Get-ADUser -SearchBase $PathLondon -Filter*
 
