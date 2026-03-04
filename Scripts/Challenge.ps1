@@ -1,31 +1,61 @@
-#1. Creates an Organizational Unit (OU) named "London" if it does not exist. If it does exist 
-# Write a message to the console stating that it already exists. 
+#1. Creates an Organizational Unit (OU) named "London" if it does not exist. If it does exist  
 # HINT: Use IF ELSE logic 
-# HINT: Use IF ELSE logic 
-# Use these variables: 
-#$OUName = "London" 
+# HINT: Use IF ELSE logic  
 #$DomainDN = "DC=Adatum,DC=com" 
 #$OUPath = "OU=$OUName,$DomainDN" 
 
-Get-ADOrganizationalUnit -Filter "name -eq  'OU-London,DC=Adatum,DC=com'" #<<#Verify if OU is exists w/out varable
+Get-ADOrganizationalUnit -Filter "name -eq  'OU-London,DC=Adatum,DC=com'" 
 
 #Make a Varable
 $OUName = "London"
-$DomainDN ="DC=Adatum,DC=com"
-$OUPath = "OU=$OUName =DomainDN"
+$DomainDN = "DC=Adatum,DC=com"
+$OUPath = "OU=$OUName,$DomainDN"
 
-$OU = Get-ADOrganizationalUnit -Filter "Name -eq '$OUName'" -SearchBase $DomainDN 
+Get-ADOrganizationalUnit -Filter "Name -eq '$OUName'" -SearchBase $DomainDN 
    
 #Create the OU with if #<# Action to perform if the condition is true #>
 
-if ($OUName -eq $null) {
+if ($null -eq $OUName ){
     New-ADOrganizationalUnit -Name $OUName -Path $DomainDN
-    Write-Host "OU '$OUName" }
-    else {
-        Write-Host "OU '$OUName' already exists. clown... =)"
+    Write-Host " OU $OUName does not exist"}
+    else { Write-Host "OU $OUName already exist" 
     }
 
+#Part 2 Inside the new "London" OU create a global security group named "London Users" ( Adding Sales & Users)
 
+$OULondon = "London"
+$DomainDN = "DC=Adatum,DC=com"
+$OUPath = "OU=London,DC=Adatum,DC=com"
+$GroupName = "London Users"
+$OUSale = "OU=Sales,DC=Adatum,DC=com"
+$LondonCity = "London"
+
+New-ADGroup -Name "London Users" -GroupScope Global -GroupCategory Security -path $OUPath -whatif
+
+#Part 3 Locate all users int the Sales OU that have an address in the city of London and move them into the London OU. 
+
+$users = Get-ADUser -SearchBase "$OUSales -filter {l -eq "London"} -properties 1 
+
+foreach ($user in $users) {
+    Move-ADObject -Identity $user.DistinguishedName -TargetPath $OULondon
+}
+
+Get-ADUser -SearchBase $OUPath -Filter * | Select Name, SamAccountName
+
+#$Part 4 Add the London OU user into "London Users" securtity group
+
+$OULondon = "London Users",$DomainDM
+$DomainDN = "DC=Adatum,DC=com"
+$PathLondon = "$OULondon,$DomainDN"
+
+$users = Get-ADUser -SearchBase $PathLondon -Filter*
+
+Foreach ($user in $users) {
+    Add-ADGroupmember -Identity "London Users" -Members $user
+ } Write-Host "Users sucessfully moved."  
+
+ #<# Action when all if and elseif conditions are false #>
+Get-ADGroupMember "London Users"
 
 
 
